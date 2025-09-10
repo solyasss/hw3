@@ -14,7 +14,9 @@ public class Main {
 //        threading th = new threading();
 //        th.demo_threads();
 
-        fileio ff = new fileio();
-        ff.demo();
+//        fileio ff = new fileio();
+//        ff.demo();
+        Db db = new Db();
+        db.demo();
     }
 }
