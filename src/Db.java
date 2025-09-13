@@ -1,10 +1,10 @@
+import dao.RandomItemDao;
+import dto.RandomItem;
+
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 
 public class Db {
@@ -57,7 +57,7 @@ public class Db {
             }
         }
 
-        for (String name : List.of( "dbauth.ini", "db.ini")) {
+        for (String name : List.of("dbauth.ini", "db.ini")) {
             try {
                 all.putAll(loadConfig(name));
             } catch (Exception ignore) {
@@ -100,9 +100,12 @@ public class Db {
             DriverManager.registerDriver(mysqlDriver);
             connection = DriverManager.getConnection(connectionString);
             System.out.println("Connection Ok");
+            queries(connection);
+
         } catch (SQLException ex) {
             System.err.println("Start error: " + ex.getMessage());
             return;
+
         } finally {
             if (connection != null) try {
                 connection.close();
@@ -114,4 +117,68 @@ public class Db {
             }
         }
     }
+
+    private void createTable(Connection connection) {
+        String sql = "CREATE TABLE IF NOT EXISTS random_items("
+                + "id CHAR(36) PRIMARY KEY,"
+                + "int_val INT,"
+                + "float_val FLOAT,"
+                + "str_val VARCHAR(64)"
+                + ") ENGINE = InnoDB DEFAULT CHARSET = utf8mb4";
+
+        try (Statement statement = connection.createStatement()) {
+            statement.executeUpdate(sql);
+            System.out.println("CREATE TABLE OK");
+
+        } catch (SQLException ex) {
+            System.err.println("Query error: " + ex.getMessage());
+        }
+    }
+
+
+    private void insert(Connection connection) {
+        Random random = new Random();
+        String sql = "INSERT INTO `random_items`(`id`, `int_val`, `float_val`, `str_val`)"
+                + "VALUES(UUID(), ?, ?, ?)";
+        ;
+
+        try (PreparedStatement statement = connection.prepareStatement(sql))
+        {
+            statement.setInt(1, random.nextInt());
+            statement.setDouble(2, random.nextDouble());
+            //statement.setFloat(2, random.nextFloat());
+            statement.setString(3, "Випадковість: " + random.nextFloat());
+            statement.executeUpdate();
+            System.out.println(" INSERT OK");
+        }
+        catch (SQLException ex) {
+            System.err.println("Query error: " + ex.getMessage());
+        }
+    }
+
+    private void insertDao(Connection connection) {
+
+        Random random = new Random();
+        RandomItemDao rid = new RandomItemDao(connection);
+
+        rid.add(new RandomItem(
+                random.nextInt(),
+                random.nextDouble(),
+                "Випадковість: " + random.nextFloat()
+        ));
+
+    }
+
+    private void queries(Connection connection) {
+        RandomItemDao rid = new RandomItemDao(connection);
+        for (RandomItem item : rid.getAll()) {
+            System.out.println(item);
+        }
+
+    }
+
+
+
+
+
 }
