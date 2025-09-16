@@ -1,3 +1,8 @@
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import ioc.ConfigModule;
+import ioc.ioC;
+
 public class Main {
     public static void main(String[] args) {
 
@@ -16,7 +21,12 @@ public class Main {
 
 //        fileio ff = new fileio();
 //        ff.demo();
-        Db db = new Db();
-        db.demo();
+//        Db db = new Db();
+//        db.demo();
+
+        Injector injector = Guice.createInjector(new ConfigModule());
+        ioC ioc = injector.getInstance(ioC.class);
+        ioc.demo();
+
     }
 }

@@ -15,20 +15,35 @@
     </properties>
 
     <dependencies>
+        <!-- MySQL JDBC -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.4.0</version>
         </dependency>
+
+        <!-- Google Guice (DI) -->
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>5.1.0</version>
+        </dependency>
+
+        <!-- Аннотации @Inject / @Singleton -->
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
     </dependencies>
 
     <build>
+        <!-- у тебя исходники лежат в /src -->
         <sourceDirectory>src</sourceDirectory>
         <resources>
             <resource>
                 <directory>src/resources</directory>
                 <includes>
-                    <include>**/*.ini</include>
                     <include>**/*</include>
                 </includes>
             </resource>
